@@ -75,10 +75,10 @@ class Account:
 # print(account.balance)
 # account.deposit(100)
 # print(account.balance)
-# account.withdraw(50)
+# account.withdraw(150)
 # print(account.balance)
 
 # 6
 is_prime = lambda x: all(x%i != 0 for i in range(2, int(x**0.5) + 1)) and x > 1
 
-print(list(filter(is_prime, [2, 3, 5, 7, 8, 11, 13, 17, 19, 23])))
+# print(list(filter(is_prime, [2, 3, 5, 7, 8, 11, 13, 17, 19, 23])))
