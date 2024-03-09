@@ -6,16 +6,16 @@ def degree_to_radian(degree: int):
 # print(degree_to_radian(15))
 
 # 2 Write a Python program to calculate the area of a trapezoid.
-def area_trapezoid(height, base1, base2):
+def area_trapezoid(height: int, base1: int, base2: int):
     return ((base1 + base2) / 2) * height
 # print(area_trapezoid(5, 5, 6))
 
 # 3 Write a Python program to calculate the area of regular polygon.
-def area_regular_polygon(sides, length):
+def area_regular_polygon(sides: int, length: int):
     return sides * (length ** 2) / (4 * math.tan(math.pi / sides))
 # print(area_regular_polygon(4, 25))
 
 # 4 Write a Python program to calculate the area of a parallelogram.
-def area_parallelogram(base, height):
+def area_parallelogram(base: int, height: int):
     return base * height
 # print(area_parallelogram(5, 6))
