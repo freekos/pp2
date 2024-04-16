@@ -84,44 +84,41 @@ class Food:
         py.draw.rect(surface, self.color, r)
         py.draw.rect(surface, WHITE, r, 1)
 
-def main():
-    screen = py.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    py.display.set_caption("Snake Game")
 
-    snake = Snake()
-    food = Food()
+screen = py.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+py.display.set_caption("Snake Game")
 
-    while True:
-        for event in py.event.get():
-            if event.type == py.QUIT:
-                py.quit()
-                sys.exit()
-            elif event.type == py.KEYDOWN:
-                snake.change_direction(event.key)
+snake = Snake()
+food = Food()
 
-        snake.move()
+while True:
+    for event in py.event.get():
+        if event.type == py.QUIT:
+            py.quit()
+            sys.exit()
+        elif event.type == py.KEYDOWN:
+            snake.change_direction(event.key)
 
-        if snake.positions[0] == food.position:
-            snake.increase_length()
-            food.randomize_position()
+    snake.move()
 
-        if snake.positions[0][0] < 0 or snake.positions[0][0] >= SCREEN_WIDTH or \
-                snake.positions[0][1] < 0 or snake.positions[0][1] >= SCREEN_HEIGHT:
-            snake.reset()
+    if snake.positions[0] == food.position:
+        snake.increase_length()
+        food.randomize_position()
 
-        screen.fill(BLACK)
+    if snake.positions[0][0] < 0 or snake.positions[0][0] >= SCREEN_WIDTH or \
+            snake.positions[0][1] < 0 or snake.positions[0][1] >= SCREEN_HEIGHT:
+        snake.reset()
 
-        snake.draw(screen)
-        food.draw(screen)
+    screen.fill(BLACK)
 
-        score_text = font.render(f"Score: {snake.score}", True, WHITE)
-        level_text = font.render(f"Level: {snake.level}", True, WHITE)
-        screen.blit(score_text, (10, 10))
-        screen.blit(level_text, (10, 50))
+    snake.draw(screen)
+    food.draw(screen)
 
-        py.display.update()
+    score_text = font.render(f"Score: {snake.score}", True, WHITE)
+    level_text = font.render(f"Level: {snake.level}", True, WHITE)
+    screen.blit(score_text, (10, 10))
+    screen.blit(level_text, (10, 50))
 
-        py.time.Clock().tick(snake.speed)
+    py.display.update()
 
-if __name__ == "__main__":
-    main()
+    py.time.Clock().tick(snake.speed)
