@@ -96,6 +96,125 @@ py.display.set_caption("Snake Game")
 snake = Snake()
 food = Food()
 
+def create_tables():
+    try:
+        config = load_config()
+        connection = connect(config)
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) NOT NULL UNIQUE
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_scores (
+                id SERIAL PRIMARY KEY,
+                user_id INT REFERENCES users(id),
+                score INT,
+                level INT,
+                CONSTRAINT fk_user_score FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+        """)
+        connection.commit()
+
+    except Error as e:
+        print("Ошибка при создании таблиц:", e)
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+def create_user(username):
+    try:
+        config = load_config()
+        connection = connect(config)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO users (username) VALUES (%s) RETURNING id", (username,))
+        user_id = cursor.fetchone()[0]
+
+        connection.commit()
+        return user_id
+    except Error as e:
+        print("Ошибка при создании пользователя:", e)
+        return None
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+def get_user_by_name(username):
+    try:
+        config = load_config()
+        connection = connect(config)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+
+        if user:
+            user_info = {
+                "id": user[0],
+                "username": user[1]
+            }
+            return user_info
+        else:
+            print("Пользователь с таким именем не найден.")
+            return None
+
+    except Error as e:
+        print("Ошибка при получении пользователя:", e)
+        return None
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+def get_user_level(username):
+    try:
+        config = load_config()
+        connection = connect(config)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT level FROM users WHERE username = %s", (username,))
+        level = cursor.fetchone()
+
+        if level:
+            return level[0]
+        else:
+            print("Пользователь не найден.")
+            return None
+
+    except Error as e:
+        print("Ошибка при получении уровня пользователя:", e)
+        return None
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+def update_user_score(username, score, level):
+    try:
+        config = load_config()
+        connection = connect(config)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE user_scores SET score = %s, level = %s WHERE user_id = (SELECT id FROM users WHERE username = %s)", (score, level, username))
+        connection.commit()
+    except Error as e:
+        print("Ошибка при обновлении результатов игры пользователя:", e)
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 def game():
     while True:
@@ -130,5 +249,24 @@ def game():
 
         py.time.Clock().tick(snake.speed)
 
-if __name__ == 'main':
-    name = input("Введите имя пользователя: ")
+if __name__ == "__main__":
+    create_tables()
+    username = input("Введите имя пользователя: ")
+
+    user = get_user_by_name(username)        
+
+    if user:
+        level = get_user_level(username)
+        if level:
+            print(f"Текущий уровень пользователя: {level}")
+        game()
+    else:
+        user_id = create_user(username)
+        if user_id:
+            level = 0
+            print(f"Текущий уровень пользователя: {level}")
+            game()
+
+            score = snake.score
+            level = snake.level
+            update_user_score(username, score, level)

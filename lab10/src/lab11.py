@@ -187,6 +187,7 @@ def insert_users(names, phones):
     return incorrect_data    
 
 if __name__ == "__main__":
+    create_table()
     res = input("Выберите команду консоли:\n1. Добавить контакты\n2. Обновить контакт\n3. Удалить контакт: \n")
     if res == '1':
         names = ['John Doe', 'Jane Smith', 'Alice Johnson']
